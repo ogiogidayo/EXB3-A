@@ -23,7 +23,16 @@ class SnowRecord{
         this.date   = date;
         this.amount = amount;
     }
+
     public String toString(){
         return this.date + "," + this.amount;
+    }
+
+    public boolean match (int year, int month) {
+
+        if (this.date.startsWith(Integer.toString(year) + "/" + Integer.toString(month))){
+            return true;
+        }
+        return false;
     }
 }
