@@ -55,8 +55,8 @@ class Complex {
     }
 
     public Complex div(Complex other){
-        double new_re = ((this.re * other.re) + (this.im * this.im))/other.abs()* other.abs();
-        double new_im = ((this.im * other.re) - (this.re * this.im))/other.abs()* other.abs();
+        double new_re = ((this.re * other.re) + (this.im * this.im))/(other.abs()* other.abs());
+        double new_im = ((this.im * other.re) - (this.re * this.im))/(other.abs()* other.abs());
          return new Complex(new_re, new_im);
     }
 }
