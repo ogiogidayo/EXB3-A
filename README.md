@@ -1,4 +1,4 @@
-# 情報通信工学実験第２ Information and Communication Engineering Laboratory II
+# Information and Communication Engineering Laboratory II
 ## Thema
 ### 1. Java
 1. Basic use of the object-oriented programming language Java
