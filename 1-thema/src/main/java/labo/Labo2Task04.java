@@ -8,10 +8,9 @@ import java.util.Scanner;
 
 public class Labo2Task04 {
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
         List<String> fileLines = new ArrayList<>();
-
-        String filename = sc.nextLine();
+        Node n = new Node();
+        String filename = args[0];
         try {
             List<String> lines = Files.readAllLines(Paths.get(filename));
             fileLines.addAll(lines);
@@ -19,7 +18,6 @@ public class Labo2Task04 {
             System.out.println("Error reading file: " + e.getMessage());
         }
         for (String line : fileLines) {
-            Node n = new Node();
             n.makeTree(line);
             System.out.println(n.calculate());
         }
@@ -30,6 +28,7 @@ class Node {
     public Node left;
     public Node right;
     public String func;
+    public static int[] x=new int[10000];
 
     public void makeTree(String statement){
         int sindex=statement.indexOf("(");
@@ -62,6 +61,10 @@ class Node {
     }
     public int calculate() {
         if (this.left == null || this.right == null){
+            if (this.func.startsWith("x")){
+                int index = Integer.parseInt(this.func.substring(1));
+                return x[index];
+            }
             return Integer.parseInt(this.func);
         } else if (func.equals("plus")) {
             return this.left.calculate() + this.right.calculate();
@@ -73,6 +76,12 @@ class Node {
             return this.left.calculate() / this.right.calculate();
         } else if (func.equals("mod")) {
             return this.left.calculate() % this.right.calculate();
-        } else return 0;
+        } else if (func.equals("set")) {
+            int index = Integer.parseInt(left.func.substring(1));
+            x[index] = this.right.calculate();
+            return x[index];
+        }
+        return 0;
+
     }
 }
