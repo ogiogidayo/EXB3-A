@@ -1,11 +1,28 @@
 package labo;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
 public class Labo2Task04 {
     public static void main(String[] args) {
-        String test = "plus(mul(4,5),minus(2,div(3,2)))";
-        Node t = new Node();
-        t.makeTree(test);
-        System.out.println(t.calculate());
+        Scanner sc = new Scanner(System.in);
+        List<String> fileLines = new ArrayList<>();
+
+        String filename = sc.nextLine();
+        try {
+            List<String> lines = Files.readAllLines(Paths.get(filename));
+            fileLines.addAll(lines);
+        } catch (Exception e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        }
+        for (String line : fileLines) {
+            Node n = new Node();
+            n.makeTree(line);
+            System.out.println(n.calculate());
+        }
     }
 }
 
