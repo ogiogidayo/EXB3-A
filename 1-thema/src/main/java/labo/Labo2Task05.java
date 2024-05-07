@@ -19,7 +19,7 @@ public class Labo2Task05 {
         }
         for (String line : fileLines) {
             n.makeTree(line);
-            System.out.println(n.calculate());
+            n.calculate();
         }
     }
 }
@@ -29,7 +29,7 @@ class Node {
     private Node right;
     private String func;
 //    private static int[] x=new int[10000];
-    private static HashMap<String, Integer> hm = new HashMap<>();
+    private static HashMap<String, MyVal> hm = new HashMap<>();
 
     public void makeTree(String statement){
         int sindex=statement.indexOf("(");
@@ -60,31 +60,53 @@ class Node {
             right.makeTree(statement.substring(mindex+1,eindex).trim());
         }
     }
-    public int calculate() {
+    public MyVal calculate() {
         if (this.left == null || this.right == null){
             if (this.func.startsWith("$")){
                 String key = this.func;
                 return hm.get(key);
             }
-            return Integer.parseInt(this.func);
-        } else if (func.equals("plus")) {
-            return this.left.calculate() + this.right.calculate();
+            return MyVal.readVal(this.func);
+        }
+        MyVal leftVal = this.left.calculate();
+        MyVal rightVal = this.right.calculate();
+        if (func.equals("plus")) {
+            if (leftVal instanceof MyDouble || rightVal instanceof MyDouble) {
+                return new MyDouble(leftVal.toDouble() + rightVal.toDouble());
+            } else {
+                return new MyInt(leftVal.toInt() + rightVal.toInt());
+            }
         } else if (func.equals("minus")) {
-            return this.left.calculate() - this.right.calculate();
+            if (leftVal instanceof MyDouble || rightVal instanceof MyDouble){
+                return new MyDouble(leftVal.toDouble() - rightVal.toDouble());
+            } else {
+                return new MyInt(leftVal.toInt() - rightVal.toInt());
+            }
         } else if (func.equals("mul")) {
-            return this.left.calculate() * this.right.calculate();
+            if (leftVal instanceof MyDouble || rightVal instanceof MyDouble){
+                return new MyDouble(leftVal.toDouble() * rightVal.toDouble());
+            } else {
+                return new MyInt(leftVal.toInt() * rightVal.toInt());
+            }
         } else if (func.equals("div")) {
-            return this.left.calculate() / this.right.calculate();
+            if (leftVal instanceof MyDouble || rightVal instanceof MyDouble){
+                return new MyDouble(leftVal.toDouble() / rightVal.toDouble());
+            } else {
+                return new MyInt(leftVal.toInt() / rightVal.toInt());
+            }
         } else if (func.equals("mod")) {
-            return this.left.calculate() % this.right.calculate();
+            return new MyInt(leftVal.toInt() % rightVal.toInt());
         } else if (func.equals("set")) {
             String key = this.left.func;
-            int value = this.right.calculate();
+            MyVal value = this.right.calculate();
             hm.put(key, value);
             return hm.get(key);
+        } else if (func.equals("join")) {
+            return new MyString(leftVal.toString() + rightVal.toString());
+        } else if (func.equals("print")) {
+            System.out.println(leftVal);
         }
-        return 0;
-
+        return null;
     }
 }
 
