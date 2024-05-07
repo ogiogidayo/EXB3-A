@@ -87,3 +87,92 @@ class Node {
 
     }
 }
+
+
+abstract class MyVal{
+    abstract public int toInt();
+    abstract public double toDouble();
+    abstract public String toString();
+
+    public static MyVal readVal(String str){
+        if (str.contains("\"")){
+            String s = str.substring(1, str.length() - 1);
+            return new MyString(s);
+        } else if (str.contains(".")) {
+            double num = Double.parseDouble(str);
+            return  new MyDouble(num);
+        } else {
+            int num = Integer.parseInt(str);
+            return new MyInt(num);
+        }
+    }
+}
+
+class MyInt extends MyVal {
+    private int v;
+
+    public MyInt(int v){
+        this.v = v;
+    }
+
+    @Override
+    public int toInt() {
+        return v;
+    }
+
+    @Override
+    public double toDouble() {
+        return v;
+    }
+
+    @Override
+    public String toString() {
+        return Integer.toString(v);
+    }
+}
+
+class MyDouble extends MyVal {
+    private double v;
+
+    public MyDouble(double v){
+        this.v=v;
+    }
+
+    @Override
+    public int toInt() {
+        return (int)v;
+    }
+
+    @Override
+    public double toDouble() {
+        return v;
+    }
+
+    @Override
+    public String toString() {
+        return Double.toString(v);
+    }
+}
+
+class MyString extends MyVal {
+    private String v;
+
+    public MyString(String v){
+        this.v=v;
+    }
+
+    @Override
+    public int toInt() {
+        return 0;
+    }
+
+    @Override
+    public double toDouble() {
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        return v;
+    }
+}
