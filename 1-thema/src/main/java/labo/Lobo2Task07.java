@@ -45,10 +45,10 @@ public class Lobo2Task07 {
 class Complex {
     public double re;
     public double im;
-    private static final double reMin = -2.1;
-    private static final double reMax = 0.5;
-    private static final double imMin = -1.3;
-    private static final double imMax = 1.3;
+    private static final double reMin = -1.1;
+    private static final double reMax = 0.7;
+    private static final double imMin = -1.1;
+    private static final double imMax = 0.7;
 
     public static Complex getComplexAt(int x, int y) {
         x += 1;
