@@ -295,7 +295,9 @@ void vertices(ListOfVertices *vs, const Graph *g)
 }
 
 // The edges of a graph
-void edges(ListOfEdges *es, const Graph *g);
+void edges(ListOfEdges *es, const Graph *g){
+
+};
 
 // The outdegree of a vertex of a graph
 unsigned int outdegree(const Graph *g, Vertex v)
@@ -304,13 +306,19 @@ unsigned int outdegree(const Graph *g, Vertex v)
 }
 
 // The indegree of a vertex of a graph
-unsigned int indegree(const Graph *g, Vertex v);
+unsigned int indegree(const Graph *g, Vertex v){
+
+};
 
 // Test if a list of vertices is a topological sort of a graph
-int isaTopSort(const ListOfVertices *vs, const Graph *g);
+int isaTopSort(const ListOfVertices *vs, const Graph *g){
+
+};
 
 // A topological sort of a graph
-int topSort(ListOfVertices *vs, const Graph *g);
+int topSort(ListOfVertices *vs, const Graph *g){
+
+};
 
 /*
  * // Sample test vectors:
@@ -394,6 +402,7 @@ int isEven(Vertex v)
 int main(int argc, char *argv[])
 {
     // Sample test vectors:
+    // homework 1
     ListOfEdges es, fs;
     readListOfEdges(&es, "2\n0 -> 1\n1 -> 2\n");
     isNullListOfEdges(&es);    // 0
@@ -405,6 +414,7 @@ int main(int argc, char *argv[])
     // 1 -> 2
     freeListOfEdges(&es);
     freeListOfEdges(&fs);
+
 //    const char *input = "0\n8\n0\n0\n0\n3 6 7 8\n3 3 1 1\n1 6\n1 1\n2 0 0\n3 5 0 2\n";
 //    Graph g, h;
 //    Edge e, f;
