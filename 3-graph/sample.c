@@ -402,18 +402,56 @@ int isEven(Vertex v)
 int main(int argc, char *argv[])
 {
     // Sample test vectors:
-    // homework 1
-    ListOfEdges es, fs;
-    readListOfEdges(&es, "2\n0 -> 1\n1 -> 2\n");
-    isNullListOfEdges(&es);    // 0
-    copyListOfEdges(&fs, &es);
-    isEqListOfEdges(&es, &fs); // 1
-    showListOfEdges(&fs);
-    // 2
-    // 0 -> 1
-    // 1 -> 2
-    freeListOfEdges(&es);
-    freeListOfEdges(&fs);
+//    // homework 1
+//    ListOfEdges es, fs;
+//    readListOfEdges(&es, "2\n0 -> 1\n1 -> 2\n");
+//    isNullListOfEdges(&es);    // 0
+//    copyListOfEdges(&fs, &es);
+//    isEqListOfEdges(&es, &fs); // 1
+//    showListOfEdges(&fs);
+//    // 2
+//    // 0 -> 1
+//    // 1 -> 2
+//    freeListOfEdges(&es);
+//    freeListOfEdges(&fs);
+
+    // homework2
+    // Sample test vectors:
+     Graph g;
+     ListOfEdges es;
+     ListOfVertices vs;
+     readGraph(&g, "0\n8\n0\n0\n0\n3 6 7 8\n2 3 1\n1 6\n1 1\n1 0\n3 5 0 2\n");
+     edges(&es, &g);
+     showListOfEdges(&es);
+     // 11
+     // 3 -> 6
+     // 3 -> 7
+     // 3 -> 8
+     // 4 -> 3
+     // 4 -> 1
+     // 5 -> 6
+     // 6 -> 1
+     // 7 -> 0
+     // 8 -> 5
+     // 8 -> 0
+     // 8 -> 2
+     printf("%d\n", indegree(&g, 0));
+     printf("%d\n", indegree(&g, 4));
+     // 2
+     // 0
+
+     vertices(&vs, &g);
+     showListOfVertices(&vs);
+     printf("\n");
+     //9 0 1 2 3 4 5 6 7 8
+     topSort(&vs, &g);
+     printf("%d\n", isaTopSort(&vs, &g));
+     // 1
+     showListOfVertices(&vs);
+     //9 4 3 7 8 5 6 0 1 2
+     freeGraph(&g);
+     freeListOfEdges(&es);
+     freeListOfVertices(&vs);
 
 //    const char *input = "0\n8\n0\n0\n0\n3 6 7 8\n3 3 1 1\n1 6\n1 1\n2 0 0\n3 5 0 2\n";
 //    Graph g, h;
