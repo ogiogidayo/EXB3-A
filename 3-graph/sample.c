@@ -295,9 +295,18 @@ void vertices(ListOfVertices *vs, const Graph *g)
 }
 
 // The edges of a graph
-void edges(ListOfEdges *es, const Graph *g){
-
-};
+void edges(ListOfEdges *es, const Graph *g) {
+    es->len = 0;
+    es->sto = malloc(0); // 修正: 初期サイズを 0 に設定
+    for (Vertex v = g->min; v <= g->max; v++) {
+        ListOfVertices *adjVertices = adj(g, v);
+        for (unsigned int i = 0; i < adjVertices->len; i++) {
+            es->len++;
+            es->sto = realloc(es->sto, es->len * sizeof(*es->sto));
+            es->sto[es->len - 1] = (Edge){ v, adjVertices->sto[i] };
+        }
+    }
+}
 
 // The outdegree of a vertex of a graph
 unsigned int outdegree(const Graph *g, Vertex v)
@@ -306,19 +315,77 @@ unsigned int outdegree(const Graph *g, Vertex v)
 }
 
 // The indegree of a vertex of a graph
-unsigned int indegree(const Graph *g, Vertex v){
+unsigned int indegree(const Graph *g, Vertex v) {
+    unsigned int count = 0;
+    ListOfEdges es;
+    edges(&es, g);
+    for (unsigned int i = 0; i < es.len; i++) {
+        if (es.sto[i].t == v) {
+            count++;
+        }
+    }
+    freeListOfEdges(&es);
+    return count;
+}
 
-};
+int isaTopSort(const ListOfVertices *vs, const Graph *g) {
+    Graph h;
+    ListOfVertices us;
 
-// Test if a list of vertices is a topological sort of a graph
-int isaTopSort(const ListOfVertices *vs, const Graph *g){
+    copyGraph(&h, g);
+    copyListOfVertices(&us, vs);
 
-};
+    while (!isNullListOfVertices(&us)) {
+        Vertex u = removeAtHeadListOfVertices(&us);
+        if (indegree(&h, u) != 0) return 0;
+        emptyListOfVertices(adj(&h, u));
+    }
 
-// A topological sort of a graph
-int topSort(ListOfVertices *vs, const Graph *g){
+    return 1;
+}
 
-};
+int topSort(ListOfVertices *L, const Graph *G) {
+    ListOfVertices S;
+    emptyListOfVertices(L);
+    emptyListOfVertices(&S);
+
+    // 入次数を計算するための配列を初期化
+    int *inDegree = calloc(G->max - G->min + 1, sizeof(int));
+    for (Vertex v = G->min; v <= G->max; v++) {
+        inDegree[v - G->min] = indegree(G, v);
+    }
+
+    // 初期化：Sに入次数が0の全頂点を追加
+    for (Vertex v = G->min; v <= G->max; v++) {
+        if (inDegree[v - G->min] == 0) {
+            appendListOfVertices(&S, v);
+        }
+    }
+
+    while (!isNullListOfVertices(&S)) {
+        Vertex u = removeAtHeadListOfVertices(&S);
+        appendListOfVertices(L, u);
+        ListOfVertices *adjVertices = adj(G, u);
+        for (unsigned int i = 0; i < adjVertices->len; i++) {
+            Vertex v = adjVertices->sto[i];
+            inDegree[v - G->min]--;
+            if (inDegree[v - G->min] == 0) {
+                appendListOfVertices(&S, v);
+            }
+        }
+    }
+
+    free(inDegree);
+
+    // 残ったエッジがないか確認
+    ListOfEdges es;
+    edges(&es, G);
+    int isDag = isNullListOfEdges(&es);
+    freeListOfEdges(&es);
+
+    return isDag;
+}
+
 
 /*
  * // Sample test vectors:
