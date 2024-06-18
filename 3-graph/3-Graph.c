@@ -1,15 +1,17 @@
-// Sample.c
-// 2024/04/18
+// Answer.c
 // Communication and Computer System Engineering Laboratory II
-// Keita Emura
+// Eiji Ogiwara
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <limits.h>
+
 
 // The basic type of vertices
 
 typedef int Vertex;
+
 
 const char *readVertex(Vertex *v, const char *str)
 {
@@ -377,7 +379,6 @@ int topSort(ListOfVertices *L, const Graph *G) {
 
     free(inDegree);
 
-    // 残ったエッジがないか確認
     ListOfEdges es;
     edges(&es, G);
     int isDag = isNullListOfEdges(&es);
@@ -385,6 +386,127 @@ int topSort(ListOfVertices *L, const Graph *G) {
 
     return isDag;
 }
+
+// プロトタイプ宣言
+Vertex findRoot(const Graph *g);
+
+// Test if a list of vertices represents an isomorphism between two rooted term DAGs
+int isanIsomorphism(const ListOfVertices *phi, const Graph *g, const Graph *h) {
+    if (g->min != h->min || g->max != h->max || phi->len != g->max - g->min + 1) {
+        return 0;
+    }
+
+    // 頂点の写像を作成
+    Vertex *mapping = malloc((g->max - g->min + 1) * sizeof(Vertex));
+    for (unsigned int i = 0; i < phi->len; i++) {
+        mapping[g->min + i] = phi->sto[i];
+    }
+
+    // 各頂点の隣接リストが対応しているかを確認
+    for (Vertex v = g->min; v <= g->max; v++) {
+        ListOfVertices *adjG = adj(g, v);
+        ListOfVertices *adjH = adj(h, mapping[v]);
+
+        if (adjG->len != adjH->len) {
+            free(mapping);
+            return 0;
+        }
+
+        for (unsigned int i = 0; i < adjG->len; i++) {
+            int found = 0;
+            for (unsigned int j = 0; j < adjH->len; j++) {
+                if (mapping[adjG->sto[i]] == adjH->sto[j]) {
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found) {
+                free(mapping);
+                return 0;
+            }
+        }
+    }
+
+    free(mapping);
+    return 1;
+}
+
+// Function to find an isomorphism between two rooted term DAGs
+int isomorphism(ListOfVertices *phi, const Graph *g, const Graph *h) {
+    if (g->min != h->min || g->max != h->max) {
+        return 0;
+    }
+
+    Vertex rootG = findRoot(g);
+    Vertex rootH = findRoot(h);
+    if (rootG == INT_MIN || rootH == INT_MIN) {
+        return 0;
+    }
+
+    Vertex *mapping = malloc((g->max - g->min + 1) * sizeof(Vertex));
+    for (Vertex v = g->min; v <= g->max; v++) {
+        mapping[v] = -1;
+    }
+
+    ListOfVertices stackG, stackH;
+    emptyListOfVertices(&stackG);
+    emptyListOfVertices(&stackH);
+    appendListOfVertices(&stackG, rootG);
+    appendListOfVertices(&stackH, rootH);
+
+    while (!isNullListOfVertices(&stackG)) {
+        Vertex vG = removeAtHeadListOfVertices(&stackG);
+        Vertex vH = removeAtHeadListOfVertices(&stackH);
+
+        if (mapping[vG] != -1 && mapping[vG] != vH) {
+            free(mapping);
+            freeListOfVertices(&stackG);
+            freeListOfVertices(&stackH);
+            return 0;
+        }
+
+        mapping[vG] = vH;
+
+        ListOfVertices *adjG = adj(g, vG);
+        ListOfVertices *adjH = adj(h, vH);
+
+        if (adjG->len != adjH->len) {
+            free(mapping);
+            freeListOfVertices(&stackG);
+            freeListOfVertices(&stackH);
+            return 0;
+        }
+
+        for (unsigned int i = 0; i < adjG->len; i++) {
+            appendListOfVertices(&stackG, adjG->sto[i]);
+            appendListOfVertices(&stackH, adjH->sto[i]);
+        }
+    }
+
+    freeListOfVertices(&stackG);
+    freeListOfVertices(&stackH);
+
+    emptyListOfVertices(phi);
+    for (Vertex v = g->min; v <= g->max; v++) {
+        appendListOfVertices(phi, mapping[v]);
+    }
+
+    free(mapping);
+    return 1;
+}
+
+// sovle to find Root
+Vertex findRoot(const Graph *g) {
+    for (Vertex v = g->min; v <= g->max; v++) {
+        if (indegree(g, v) == 0) {
+            return v;
+        }
+    }
+    return INT_MIN;
+}
+
+// An isomorphism between two rooted term DAGs
+
 
 
 /*
@@ -429,11 +551,7 @@ int topSort(ListOfVertices *L, const Graph *G) {
  * /
 
 
-// Test if a list of vertices represents an isomorphism between two rooted term DAGs
-int isanIsomorphism(const ListOfVertices *phi, const Graph *g, const Graph *h);
 
-// An isomorphism between two rooted term DAGs
-int isomorphism(ListOfVertices *iso, const Graph *g, const Graph *h);
 
 /*
  * // Sample test vectors:
@@ -468,57 +586,77 @@ int isEven(Vertex v)
 
 int main(int argc, char *argv[])
 {
-    // Sample test vectors:
+//     Sample test vectors:
 //    // homework 1
 //    ListOfEdges es, fs;
 //    readListOfEdges(&es, "2\n0 -> 1\n1 -> 2\n");
-//    isNullListOfEdges(&es);    // 0
+//    int a = isNullListOfEdges(&es);    // 0
 //    copyListOfEdges(&fs, &es);
-//    isEqListOfEdges(&es, &fs); // 1
+//    int b =isEqListOfEdges(&es, &fs); // 1
 //    showListOfEdges(&fs);
 //    // 2
 //    // 0 -> 1
 //    // 1 -> 2
 //    freeListOfEdges(&es);
 //    freeListOfEdges(&fs);
+//    printf("%d, %d", a, b);
 
-    // homework2
-    // Sample test vectors:
-     Graph g;
-     ListOfEdges es;
-     ListOfVertices vs;
-     readGraph(&g, "0\n8\n0\n0\n0\n3 6 7 8\n2 3 1\n1 6\n1 1\n1 0\n3 5 0 2\n");
-     edges(&es, &g);
-     showListOfEdges(&es);
-     // 11
-     // 3 -> 6
-     // 3 -> 7
-     // 3 -> 8
-     // 4 -> 3
-     // 4 -> 1
-     // 5 -> 6
-     // 6 -> 1
-     // 7 -> 0
-     // 8 -> 5
-     // 8 -> 0
-     // 8 -> 2
-     printf("%d\n", indegree(&g, 0));
-     printf("%d\n", indegree(&g, 4));
-     // 2
-     // 0
+//    // homework2
+//    // Sample test vectors:
+//     Graph g;
+//     ListOfEdges es;
+//     ListOfVertices vs;
+//     readGraph(&g, "0\n8\n0\n0\n0\n3 6 7 8\n2 3 1\n1 6\n1 1\n1 0\n3 5 0 2\n");
+//     edges(&es, &g);
+//     showListOfEdges(&es);
+//     // 11
+//     // 3 -> 6
+//     // 3 -> 7
+//     // 3 -> 8
+//     // 4 -> 3
+//     // 4 -> 1
+//     // 5 -> 6
+//     // 6 -> 1
+//     // 7 -> 0
+//     // 8 -> 5
+//     // 8 -> 0
+//     // 8 -> 2
+//     printf("%d\n", indegree(&g, 0));
+//     printf("%d\n", indegree(&g, 4));
+//     // 2
+//     // 0
+//
+//     vertices(&vs, &g);
+//     showListOfVertices(&vs);
+//     printf("\n");
+//     //9 0 1 2 3 4 5 6 7 8
+//     topSort(&vs, &g);
+//     printf("%d\n", isaTopSort(&vs, &g));
+//     // 1
+//     showListOfVertices(&vs);
+//     //9 4 3 7 8 5 6 0 1 2
+//     freeGraph(&g);
+//     freeListOfEdges(&es);
+//     freeListOfVertices(&vs);
+//
+//
+//
+// Sample test vectors:
+// homework3
+//    Graph g, h;
+//    ListOfVertices phi;
+//
+//    readGraph(&g, "1\n7\n0\n0\n1 2\n2 7 2\n1 1\n3 4 3 5\n0\n");
+//    readGraph(&h, "1\n7\n0\n0\n0\n3 7 6 5\n1 1\n1 2\n2 3 2\n");
+//    int b = isomorphism(&phi, &g, &h);     // 1
+//    showListOfVertices(&phi);      // 7 1 2 6 7 5 4 3
+//    int a = isanIsomorphism(&phi, &g, &h); // 1
+//    printf("\n%d, %d", a, b);
+//
+//    freeGraph(&g);
+//    freeGraph(&h);
+//    freeListOfVertices(&phi);
 
-     vertices(&vs, &g);
-     showListOfVertices(&vs);
-     printf("\n");
-     //9 0 1 2 3 4 5 6 7 8
-     topSort(&vs, &g);
-     printf("%d\n", isaTopSort(&vs, &g));
-     // 1
-     showListOfVertices(&vs);
-     //9 4 3 7 8 5 6 0 1 2
-     freeGraph(&g);
-     freeListOfEdges(&es);
-     freeListOfVertices(&vs);
 
 //    const char *input = "0\n8\n0\n0\n0\n3 6 7 8\n3 3 1 1\n1 6\n1 1\n2 0 0\n3 5 0 2\n";
 //    Graph g, h;
