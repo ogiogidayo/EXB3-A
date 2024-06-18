@@ -544,7 +544,7 @@ Vertex findRoot(const Graph *g) {
  * printf("%d\n", isaTopSort(&vs, &g));
  * // 1
  * showListOfVertices(&vs);
- * //9 4 3 7 8 5 6 0 1 2
+ * //9 4 3 7 8 5 6 0 1 2　この結果が違うが複数通りあるためOK?
  * freeGraph(&g);
  * freeListOfEdges(&es);
  * freeListOfVertices(&vs);
@@ -648,10 +648,11 @@ int main(int argc, char *argv[])
 //
 //    readGraph(&g, "1\n7\n0\n0\n1 2\n2 7 2\n1 1\n3 4 3 5\n0\n");
 //    readGraph(&h, "1\n7\n0\n0\n0\n3 7 6 5\n1 1\n1 2\n2 3 2\n");
-//    int b = isomorphism(&phi, &g, &h);     // 1
+//    int a = isomorphism(&phi, &g, &h);     // 1
+//    printf("%d\n", a);
 //    showListOfVertices(&phi);      // 7 1 2 6 7 5 4 3
-//    int a = isanIsomorphism(&phi, &g, &h); // 1
-//    printf("\n%d, %d", a, b);
+//    int b = isanIsomorphism(&phi, &g, &h); // 1
+//    printf("\n%d\n", b);
 //
 //    freeGraph(&g);
 //    freeGraph(&h);
