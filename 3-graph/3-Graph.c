@@ -243,7 +243,8 @@ int isEqListOfEdges(const ListOfEdges *es, const ListOfEdges *fs){   // test if 
     return 1;
 };
 
-void copyListOfEdges(ListOfEdges *es, const ListOfEdges *fs){   // copy fs to es
+// copy fs to es
+void copyListOfEdges(ListOfEdges *es, const ListOfEdges *fs){
     es->len = fs->len;
     es->sto = malloc(es->len * sizeof(*es->sto));
     for (unsigned int i = 0; i < es->len; i++) {
@@ -251,11 +252,13 @@ void copyListOfEdges(ListOfEdges *es, const ListOfEdges *fs){   // copy fs to es
     }
 };
 
-int isNullListOfEdges(const ListOfEdges *es){ // test if *es == []
+// test if *es == []
+int isNullListOfEdges(const ListOfEdges *es){
     return es->len == 0;
 };
 
-const char *readListOfEdges(ListOfEdges *es, const char *str) { // read es from str
+// read es from str
+const char *readListOfEdges(ListOfEdges *es, const char *str) {
     int off;
 
     sscanf(str, " %d %n", &es->len, &off); str += off;
@@ -275,7 +278,8 @@ void showListOfEdges(const ListOfEdges *es) {
     }
 };
 
-void freeListOfEdges(ListOfEdges *es) { // free the memory used by es
+// free the memory used by es
+void freeListOfEdges(ListOfEdges *es) {
     free(es->sto);
     es->sto = NULL;
     es->len = 0;
@@ -299,7 +303,7 @@ void vertices(ListOfVertices *vs, const Graph *g)
 // The edges of a graph
 void edges(ListOfEdges *es, const Graph *g) {
     es->len = 0;
-    es->sto = malloc(0); // 修正: 初期サイズを 0 に設定
+    es->sto = malloc(0);
     for (Vertex v = g->min; v <= g->max; v++) {
         ListOfVertices *adjVertices = adj(g, v);
         for (unsigned int i = 0; i < adjVertices->len; i++) {
@@ -351,13 +355,11 @@ int topSort(ListOfVertices *L, const Graph *G) {
     emptyListOfVertices(L);
     emptyListOfVertices(&S);
 
-    // 入次数を計算するための配列を初期化
     int *inDegree = calloc(G->max - G->min + 1, sizeof(int));
     for (Vertex v = G->min; v <= G->max; v++) {
         inDegree[v - G->min] = indegree(G, v);
     }
 
-    // 初期化：Sに入次数が0の全頂点を追加
     for (Vertex v = G->min; v <= G->max; v++) {
         if (inDegree[v - G->min] == 0) {
             appendListOfVertices(&S, v);
@@ -396,13 +398,11 @@ int isanIsomorphism(const ListOfVertices *phi, const Graph *g, const Graph *h) {
         return 0;
     }
 
-    // 頂点の写像を作成
     Vertex *mapping = malloc((g->max - g->min + 1) * sizeof(Vertex));
     for (unsigned int i = 0; i < phi->len; i++) {
         mapping[g->min + i] = phi->sto[i];
     }
 
-    // 各頂点の隣接リストが対応しているかを確認
     for (Vertex v = g->min; v <= g->max; v++) {
         ListOfVertices *adjG = adj(g, v);
         ListOfVertices *adjH = adj(h, mapping[v]);
@@ -431,7 +431,7 @@ int isanIsomorphism(const ListOfVertices *phi, const Graph *g, const Graph *h) {
     return 1;
 }
 
-// Function to find an isomorphism between two rooted term DAGs
+// An isomorphism between two rooted term DAGs
 int isomorphism(ListOfVertices *phi, const Graph *g, const Graph *h) {
     if (g->min != h->min || g->max != h->max) {
         return 0;
@@ -504,8 +504,6 @@ Vertex findRoot(const Graph *g) {
     }
     return INT_MIN;
 }
-
-// An isomorphism between two rooted term DAGs
 
 
 
@@ -591,15 +589,16 @@ int main(int argc, char *argv[])
 //    ListOfEdges es, fs;
 //    readListOfEdges(&es, "2\n0 -> 1\n1 -> 2\n");
 //    int a = isNullListOfEdges(&es);    // 0
+//    printf("%d\n", a);
 //    copyListOfEdges(&fs, &es);
 //    int b =isEqListOfEdges(&es, &fs); // 1
+//    printf("%d\n\n", b);
 //    showListOfEdges(&fs);
 //    // 2
 //    // 0 -> 1
 //    // 1 -> 2
 //    freeListOfEdges(&es);
 //    freeListOfEdges(&fs);
-//    printf("%d, %d", a, b);
 
 //    // homework2
 //    // Sample test vectors:
