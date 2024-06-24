@@ -30,4 +30,4 @@ xlabel('Time (s)');
 ylabel('Amplitude');
 grid on;
 
-sgtitle('Original Signal, Noised Signal, and Added Noise');
+sgtitle('Signals');
