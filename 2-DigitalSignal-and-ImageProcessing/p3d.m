@@ -10,35 +10,37 @@ x_noised = x + noise;
 
 X_noised = fft(x_noised);
 
-window = zeros(1, fs);
-window(44:55) = 1;
-window(970:980) = 1;
+fillert = zeros(1, fs);
+fillert(44:55) = 1;
+fillert(970:980) = 1;
 
-X_filtered = X_noised .* window;
+X_filtered = X_noised .* fillert;
 
 x_filtered = real(ifft(X_filtered));
 
 figure;
 subplot(3, 1, 1);
-plot(t, x);
-title('Original Signal');
+plot(t, x, ".");
+title('Original Signal', ".");
 xlabel('t');
+xlim([0 0.1]);
 ylabel('Amplitude');
 grid on;
 
 subplot(3, 1, 2);
-plot(t, x_noised);
+plot(t, x_noised, ".");
 title('Noised Signal');
 xlabel('t');
+xlim([0 0.1]);
 ylabel('Amplitude');
 grid on;
 
 subplot(3, 1, 3);
-plot(t, x_filtered);
+plot(t, x_filtered, ".");
 title('Filtered Signal');
 xlabel('t');
+xlim([0 0.1]);
 ylabel('Amplitude');
 grid on;
 
-% Adjust layout
-sgtitle('Original Signal, Noised Signal, and Filtered Signal');
+sgtitle('Signals');
